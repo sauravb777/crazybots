@@ -120,8 +120,8 @@ def Send_Cube(name="default",pos=[0,0,0],size=[1,1,1]):
 
         links.append(link)
     else:
-        link = LINK_URDF("cube",name,pos,size)
-
+        # link = LINK_URDF("cube",name,pos,size)
+        link = LINK_URDF(name,pos,size)
         links.append(link)
 
     link.Save(f)
