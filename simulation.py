@@ -7,7 +7,6 @@ import time
 
 class SIMULATION:
     def __init__(self):
-        #once check here if got anye error....
         self.physicsClient = p.connect(p.GUI)
         p.setAdditionalSearchPath(pybullet_data.getDataPath())
         p.configureDebugVisualizer(p.COV_ENABLE_GUI,0)
@@ -21,8 +20,9 @@ class SIMULATION:
         for t in range(steps):
             p.stepSimulation()
             self.robot.Sense(t)
-            self.robot.Act(t)
-            time.sleep(1/15)
+            self.robot.Think()
+            self.robot.Act()
+            time.sleep(1/60)
     
     def __del__(self):
         p.disconnect()

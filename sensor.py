@@ -12,9 +12,6 @@ class SENSOR:
             self.values.append(values)
         else:
             self.values[t] = values
-            
-        # if t == steps - 1:
-        #     print(f"{self.linkName} values: {self.values}")
         
     def Save_Values(self):
         np.save(f"data/{self.linkName}_SensorValues.npy", self.values)
