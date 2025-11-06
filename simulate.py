@@ -1,9 +1,8 @@
-# np.save("data/targetAngles_back.npy", c.targetAngles_back)
-# np.save("data/targetAngles_front.npy", c.targetAngles_front)
-
-# np.save("data/backLegSensorValues.npy", backLegSensorValues)
-# np.save("data/frontLegSensorValues.npy", frontLegSensorValues)
+import sys
 
 from simulation import SIMULATION
-simulation = SIMULATION()
+
+directOrGUI = sys.argv[1] if len(sys.argv) > 1 else "GUI"
+simulation = SIMULATION(directOrGUI)
 simulation.Run()
+simulation.Get_Fitness()
