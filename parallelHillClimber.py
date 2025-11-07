@@ -10,16 +10,11 @@ from solution import SOLUTION
 
 class PARALLEL_HILL_CLIMBER:
     def __init__(self):
-        if platform.system() == "Windows":
-            os.system("del fitness*.txt 2>nul")
-            os.system("del brain*.nndf 2>nul")
-            os.system("del body.urdf 2>nul")
-            os.system("del world.sdf 2>nul")
-        else:
-            os.system("rm -f fitness*.txt")
-            os.system("rm -f brain*.nndf")
-            os.system("rm -f body.urdf")
-            os.system("rm -f world.sdf")
+        
+        os.system("del fitness*.txt 2>nul")
+        os.system("del brain*.nndf 2>nul")
+        os.system("del body.urdf 2>nul")
+        os.system("del world.sdf 2>nul")
 
         self.parents = {}
         self.nextAvailableID = 0 
