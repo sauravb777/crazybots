@@ -51,15 +51,12 @@ class ROBOT:
         self.nn.Update()
         self.nn.Print()
         
-    
     def Get_Fitness(self):
         x = p.getLinkState(self.robotId, 0)[0][0]
-
         myID = int(sys.argv[2])
         tmp = f"tmp{myID}.txt"
         final = f"fitness{myID}.txt"
-        
+
         with open(tmp, "w") as f:
             f.write(str(x))
         os.replace(tmp, final)
-

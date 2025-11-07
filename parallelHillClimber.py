@@ -61,18 +61,14 @@ class PARALLEL_HILL_CLIMBER:
                 self.parents[k] = self.children[k]
 
     def Print(self, generationIndex):
-        print(f"\n---- Generation {generationIndex} fitnesses ----")
+        print(f"\nGeneration {generationIndex} fitnesses")
         for k in sorted(self.parents.keys()):
             pfit = self.parents[k].fitness
             cfit = self.children[k].fitness
             print(f"Parent {k}: {pfit:.6f}    Child {k}: {cfit:.6f}")
-        print("---- end ----\n")
+        print("\n")
 
     def Show_Best(self):
         best = min(self.parents.values(), key=lambda s: s.fitness)
-        print(f"Best solution ID {best.myID} fitness: {best.fitness}")
-        best.Start_Simulation("GUI")
-        print(f"Best solution ID {best.myID} fitness: {best.fitness}")
-        best.Start_Simulation("GUI")
         print(f"Best solution ID {best.myID} fitness: {best.fitness}")
         best.Start_Simulation("GUI")
