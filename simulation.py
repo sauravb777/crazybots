@@ -10,6 +10,7 @@ from world import WORLD
 
 class SIMULATION:
     def __init__(self, directOrGUI):
+        self.directOrGUI = directOrGUI
         if directOrGUI == "DIRECT":
             self.physicsClient = p.connect(p.DIRECT)
         else:
@@ -20,7 +21,6 @@ class SIMULATION:
         self.world = WORLD()
         self.robot = ROBOT()
         
-    
     def Run(self):
         steps = 1000
         for t in range(steps):
@@ -28,11 +28,11 @@ class SIMULATION:
             self.robot.Sense(t)
             self.robot.Think()
             self.robot.Act()
-            time.sleep(1/240)
+            if self.directOrGUI == "GUI":
+                time.sleep(1/240)
             
     def Get_Fitness(self):
         self.robot.Get_Fitness()
     
     def __del__(self):
         p.disconnect()
-        

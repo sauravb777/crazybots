@@ -1,6 +1,6 @@
-import numpy as np
+numberOfGenerations = 10
+populationSize = 10
 
-numberOfGenerations = 7
 
 # amplitude, frequency, phaseOffset = np.pi/4, 10, 0
 

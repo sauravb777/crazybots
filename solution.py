@@ -1,5 +1,7 @@
 import os
 import random
+import subprocess
+import time
 
 import numpy as np
 
@@ -7,21 +9,11 @@ import pyrosim.pyrosim as pyrosim
 
 
 class SOLUTION:
-    def __init__(self):
+    def __init__(self, myID):
+        self.myID = myID
         self.weights = np.random.rand(3, 2) * 2 - 1
         self.fitness = None
-
-    def Evaluate(self, directOrGUI):
-        self.Create_World()
-        self.Create_Body()
-        self.Create_Brain()
-
-        os.system(f"python simulate.py {directOrGUI}")
-
-        fitnessFile = open("fitness.txt", "r")
-        fitnessString = fitnessFile.read().strip()
-        fitnessFile.close()
-        self.fitness = float(fitnessString)
+        self.proc = None
 
     def Create_World(self):
         pyrosim.Start_SDF("world.sdf")
@@ -38,7 +30,7 @@ class SOLUTION:
         pyrosim.End()
 
     def Create_Brain(self):
-        pyrosim.Start_NeuralNetwork("brain.nndf")
+        pyrosim.Start_NeuralNetwork(f"brain{self.myID}.nndf")
 
         for i, link in enumerate(["Torso", "BackLeg", "FrontLeg"]):
             pyrosim.Send_Sensor_Neuron(name=i, linkName=link)
@@ -59,6 +51,36 @@ class SOLUTION:
         row = random.randint(0, 2)
         col = random.randint(0, 1)
         self.weights[row, col] = random.random() * 2 - 1
-        row = random.randint(0, 2)
-        col = random.randint(0, 1)
-        self.weights[row, col] = random.random() * 2 - 1
+    
+    def Start_Simulation(self, directOrGUI):
+        if not os.path.exists("body.urdf"):
+            self.Create_Body()
+        if not os.path.exists("world.sdf"):
+            self.Create_World()
+
+        brainfile = f"brain{self.myID}.nndf"
+        if not os.path.exists(brainfile):
+            self.Create_Brain()
+
+        cmd = ["python", "simulate.py", directOrGUI, str(self.myID)]
+
+        if directOrGUI == "DIRECT":
+            DEVNULL = open(os.devnull, "wb")
+            self.proc = subprocess.Popen(
+                cmd, stdout=DEVNULL, stderr=DEVNULL, creationflags=subprocess.CREATE_NO_WINDOW
+            )
+        else:
+            subprocess.call(cmd)
+
+    
+     
+    def Wait_For_Simulation_To_End(self):
+        filename = f"fitness{self.myID}.txt"
+
+        while not os.path.exists(filename):
+            time.sleep(0.01)
+
+
+        with open(filename, "r") as f:
+            self.fitness = float(f.read().strip())
+        os.remove(filename)
