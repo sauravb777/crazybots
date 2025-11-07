@@ -2,6 +2,8 @@ import glob
 import os
 import platform
 
+import numpy as np
+
 import constants as c
 from solution import SOLUTION
 
@@ -71,7 +73,7 @@ class PARALLEL_HILL_CLIMBER:
             if self.children[k].fitness > self.parents[k].fitness:
                 self.parents[k] = self.children[k]
 
-    def Print(self):
+    def Print(self, generationIndex):
         for k in sorted(self.parents.keys()):
             parent_fitness = self.parents[k].fitness
             child_fitness = self.children[k].fitness
