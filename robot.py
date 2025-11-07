@@ -1,8 +1,10 @@
+
 import os
 import sys
 
 import pybullet as p
 
+import constants as c
 import pyrosim.pyrosim as pyrosim
 from motor import MOTOR
 from pyrosim.neuralNetwork import NEURAL_NETWORK
@@ -17,9 +19,6 @@ class ROBOT:
         myID = int(sys.argv[2])
         nndf_file = f"brain{myID}.nndf"
         self.nn = NEURAL_NETWORK(nndf_file)
-
-        if os.path.exists(nndf_file):
-            os.remove(nndf_file)
 
         self.sensors = {}
         self.motors = {}
@@ -43,20 +42,25 @@ class ROBOT:
         for neuronName in self.nn.Get_Neuron_Names():
             if self.nn.Is_Motor_Neuron(neuronName):
                 jointName = self.nn.Get_Motor_Neurons_Joint(neuronName)
-                desiredAngle = self.nn.Get_Value_Of(neuronName)
+                desiredAngle = self.nn.Get_Value_Of(neuronName) * c.motorJointRange
                 self.motors[jointName].Set_Value(self.robotId, desiredAngle)
         
     
     def Think(self):
         self.nn.Update()
-        self.nn.Print()
         
     def Get_Fitness(self):
-        x = p.getLinkState(self.robotId, 0)[0][0]
+        basePositionAndOrientation = p.getBasePositionAndOrientation(self.robotId)
+        x = basePositionAndOrientation[0][0]  
+        y = basePositionAndOrientation[0][1] 
+
+        fitness_value = -x - y 
+        
         myID = int(sys.argv[2])
         tmp = f"tmp{myID}.txt"
         final = f"fitness{myID}.txt"
 
         with open(tmp, "w") as f:
-            f.write(str(x))
+            f.write(str(fitness_value))
         os.replace(tmp, final)
+

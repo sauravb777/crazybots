@@ -1,8 +1,5 @@
 numberOfGenerations = 10
 populationSize = 10
-
-
-# amplitude, frequency, phaseOffset = np.pi/4, 10, 0
-
-
-
+numSensorNeurons = 9
+numMotorNeurons = 8  
+motorJointRange = 0.2  
