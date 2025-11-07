@@ -2,8 +2,6 @@ import glob
 import os
 import platform
 
-import numpy as np
-
 import constants as c
 from solution import SOLUTION
 
@@ -73,12 +71,12 @@ class PARALLEL_HILL_CLIMBER:
             if self.children[k].fitness > self.parents[k].fitness:
                 self.parents[k] = self.children[k]
 
-    def Print(self, generationIndex):
+    def Print(self):
         for k in sorted(self.parents.keys()):
             parent_fitness = self.parents[k].fitness
             child_fitness = self.children[k].fitness
-            print(f"  Parent[{k}]: {parent_fitness:.4f}  Child[{k}]: {child_fitness:.4f}")
-        print("\n\n")
+            print(f"  Parent: {parent_fitness:.4f}  Child: {child_fitness:.4f}")
+        print("\n")
 
     def Show_Best(self):
         best_parent = max(self.parents.values(), key=lambda x: x.fitness)
