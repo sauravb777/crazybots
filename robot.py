@@ -41,38 +41,25 @@ class ROBOT:
         for neuronName in self.nn.Get_Neuron_Names():
             if self.nn.Is_Motor_Neuron(neuronName):
                 jointName = self.nn.Get_Motor_Neurons_Joint(neuronName)
-                desiredAngle = self.nn.Get_Value_Of(neuronName) * 0.5 
+                desiredAngle = self.nn.Get_Value_Of(neuronName) * 0.5
                 self.motors[jointName].Set_Value(self.robotId, desiredAngle)
 
     def Get_Fitness(self):
         lower_legs = ["FrontLowerLeg", "BackLowerLeg", "LeftLowerLeg", "RightLowerLeg"]
         
-        if not all(leg in self.sensors for leg in lower_legs):
-            fitness = 0
-        else:
-            min_length = min(len(self.sensors[leg].values) for leg in lower_legs)
-            if min_length == 0:
-                fitness = 0
-            else:
-                coordinated_jumps = 0
-                for t in range(min_length):
-                    all_airborne = all(self.sensors[leg].values[t] == -1 for leg in lower_legs)
-                    if all_airborne:
-                        coordinated_jumps += 1
-                
-                base_position, base_orientation = p.getBasePositionAndOrientation(self.robotId)
-                max_height = base_position[2]
-                
-                torso_touching = 0
-                if "Torso" in self.sensors and len(self.sensors["Torso"].values) > 0:
-                    torso_touching = sum(1 for val in self.sensors["Torso"].values if val == 1)
-                
-
-                euler_angles = p.getEulerFromQuaternion(base_orientation)
-                roll, pitch, yaw = euler_angles
-                stability_penalty = abs(roll) + abs(pitch) 
-                
-                fitness = (coordinated_jumps * 10) + (max_height * 5) - (torso_touching * 2) - (stability_penalty * 3)
+        flight_time = 0
+        min_length = min(len(self.sensors[leg].values) for leg in lower_legs)
+        
+        for t in range(min_length):
+            all_airborne = True
+            for leg in lower_legs:
+                if self.sensors[leg].values[t] != -1: 
+                    all_airborne = False
+                    break
+            if all_airborne:
+                flight_time += 1
+        
+        fitness = flight_time
         
         tmp = f"tmp{self.myID}.txt"
         final = f"fitness{self.myID}.txt"

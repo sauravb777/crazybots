@@ -1,6 +1,5 @@
 import pybullet as p
 
-import constants as c
 import pyrosim.pyrosim as pyrosim
 
 
@@ -14,5 +13,5 @@ class MOTOR:
             jointName=self.jointName, 
             controlMode=p.POSITION_CONTROL, 
             targetPosition=desiredAngle, 
-            maxForce=c.maxForce  
+            maxForce=500
         )

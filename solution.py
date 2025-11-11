@@ -12,7 +12,7 @@ import pyrosim.pyrosim as pyrosim
 class SOLUTION:
     def __init__(self, myID):
         self.myID = myID
-        self.weights = (np.random.rand(c.numSensorNeurons, c.numMotorNeurons) * 4 - 2)
+        self.weights = np.random.rand(c.numSensorNeurons, c.numMotorNeurons) * 2 - 1
         self.fitness = 0
 
     def Create_World(self):
@@ -22,61 +22,23 @@ class SOLUTION:
 
     def Create_Body(self):
         pyrosim.Start_URDF("body.urdf")
-        
         pyrosim.Send_Cube(name="Torso", pos=[0, 0, 1], size=[1, 1, 1])
-        
-        # Front Leg 
-        pyrosim.Send_Joint(name="Torso_FrontLeg", parent="Torso", child="FrontLeg", 
-                          type="revolute", position=[0, 0.5, 1], jointAxis="0 1 0",
-                          limit_lower="-0.5", limit_upper="0.5")
+        pyrosim.Send_Joint(name="Torso_FrontLeg", parent="Torso", child="FrontLeg", type="revolute", position=[0, 0.5, 1], jointAxis="0 1 0")
         pyrosim.Send_Cube(name="FrontLeg", pos=[0, 0.5, 0], size=[0.2, 1, 0.2])
-        
-        # Back Leg
-        pyrosim.Send_Joint(name="Torso_BackLeg", parent="Torso", child="BackLeg", 
-                          type="revolute", position=[0, -0.5, 1], jointAxis="0 1 0",
-                          limit_lower="-0.5", limit_upper="0.5")
+        pyrosim.Send_Joint(name="Torso_BackLeg", parent="Torso", child="BackLeg", type="revolute", position=[0, -0.5, 1], jointAxis="0 1 0")
         pyrosim.Send_Cube(name="BackLeg", pos=[0, -0.5, 0], size=[0.2, 1, 0.2])
-        
-        # Left Leg 
-        pyrosim.Send_Joint(name="Torso_LeftLeg", parent="Torso", child="LeftLeg", 
-                          type="revolute", position=[0.5, 0, 1], jointAxis="1 0 0",
-                          limit_lower="-0.5", limit_upper="0.5")
+        pyrosim.Send_Joint(name="Torso_LeftLeg", parent="Torso", child="LeftLeg", type="revolute", position=[0.5, 0, 1], jointAxis="1 0 0")
         pyrosim.Send_Cube(name="LeftLeg", pos=[0.5, 0, 0], size=[1, 0.2, 0.2])
-        
-        # Right Leg
-        pyrosim.Send_Joint(name="Torso_RightLeg", parent="Torso", child="RightLeg", 
-                          type="revolute", position=[-0.5, 0, 1], jointAxis="1 0 0",
-                          limit_lower="-0.5", limit_upper="0.5")
+        pyrosim.Send_Joint(name="Torso_RightLeg", parent="Torso", child="RightLeg", type="revolute", position=[-0.5, 0, 1], jointAxis="1 0 0")
         pyrosim.Send_Cube(name="RightLeg", pos=[-0.5, 0, 0], size=[1, 0.2, 0.2])
-        
-        # Front Lower Leg 
-        pyrosim.Send_Joint(name="FrontLeg_FrontLowerLeg", parent="FrontLeg", 
-                          child="FrontLowerLeg", type="revolute", 
-                          position=[0, 1.0, 0], jointAxis="1 0 0",
-                          limit_lower="0.0", limit_upper="1.0")
+        pyrosim.Send_Joint(name="FrontLeg_FrontLowerLeg", parent="FrontLeg", child="FrontLowerLeg", type="revolute", position=[0, 1.0, 0], jointAxis="1 0 0")
         pyrosim.Send_Cube(name="FrontLowerLeg", pos=[0, 0, -0.5], size=[0.2, 0.2, 1])
-        
-        # Back Lower Leg
-        pyrosim.Send_Joint(name="BackLeg_BackLowerLeg", parent="BackLeg", 
-                          child="BackLowerLeg", type="revolute", 
-                          position=[0, -1.0, 0], jointAxis="1 0 0",
-                          limit_lower="0.0", limit_upper="1.0")
+        pyrosim.Send_Joint(name="BackLeg_BackLowerLeg", parent="BackLeg", child="BackLowerLeg", type="revolute", position=[0, -1.0, 0], jointAxis="1 0 0")
         pyrosim.Send_Cube(name="BackLowerLeg", pos=[0, 0, -0.5], size=[0.2, 0.2, 1])
-        
-        # Left Lower Leg 
-        pyrosim.Send_Joint(name="LeftLeg_LeftLowerLeg", parent="LeftLeg", 
-                          child="LeftLowerLeg", type="revolute", 
-                          position=[1.0, 0, 0], jointAxis="0 1 0",
-                          limit_lower="0.0", limit_upper="1.0")
+        pyrosim.Send_Joint(name="LeftLeg_LeftLowerLeg", parent="LeftLeg", child="LeftLowerLeg", type="revolute", position=[1.0, 0, 0], jointAxis="0 1 0")
         pyrosim.Send_Cube(name="LeftLowerLeg", pos=[0, 0, -0.5], size=[0.2, 0.2, 1])
-        
-        # Right Lower Leg 
-        pyrosim.Send_Joint(name="RightLeg_RightLowerLeg", parent="RightLeg", 
-                          child="RightLowerLeg", type="revolute", 
-                          position=[-1.0, 0, 0], jointAxis="0 1 0",
-                          limit_lower="0.0", limit_upper="1.0")
+        pyrosim.Send_Joint(name="RightLeg_RightLowerLeg", parent="RightLeg", child="RightLowerLeg", type="revolute", position=[-1.0, 0, 0], jointAxis="0 1 0")
         pyrosim.Send_Cube(name="RightLowerLeg", pos=[0, 0, -0.5], size=[0.2, 0.2, 1])
-        
         pyrosim.End()
 
     def Create_Brain(self):
@@ -93,10 +55,9 @@ class SOLUTION:
         pyrosim.End()
 
     def Mutate(self):
-        for _ in range(3):
-            row = random.randint(0, c.numSensorNeurons - 1)
-            col = random.randint(0, c.numMotorNeurons - 1)
-            self.weights[row, col] = random.random() * 4 - 2
+        row = random.randint(0, c.numSensorNeurons - 1)
+        col = random.randint(0, c.numMotorNeurons - 1)
+        self.weights[row, col] = random.random() * 2 - 1
     
     def Start_Simulation(self, directOrGUI):
         self.Create_Body()
@@ -106,7 +67,7 @@ class SOLUTION:
         if directOrGUI == "DIRECT":
             self.proc = subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         else:
-            subprocess.run(cmd, timeout=30)
+            subprocess.run(cmd)
     
     def Wait_For_Simulation_To_End(self):
         if hasattr(self, 'proc'):
@@ -116,10 +77,12 @@ class SOLUTION:
         while not os.path.exists(filename):
             time.sleep(0.1)
             waited += 0.1
-            if waited > 20:
+            if waited > 15:
                 self.fitness = 0
                 return
-        with open(filename, "r") as f:
-            self.fitness = float(f.read().strip())
-        os.remove(filename)
-        self.fitness = 0
+        try:
+            with open(filename, "r") as f:
+                self.fitness = float(f.read().strip())
+            os.remove(filename)
+        except:
+            self.fitness = 0
