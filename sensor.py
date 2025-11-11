@@ -1,5 +1,5 @@
-import numpy as np
-import pyrosim.pyrosim as pyrosim 
+import pyrosim.pyrosim as pyrosim
+
 
 class SENSOR:
     def __init__(self, linkName):
@@ -7,11 +7,8 @@ class SENSOR:
         self.values = []
     
     def Get_Value(self, t):
-        values = pyrosim.Get_Touch_Sensor_Value_For_Link(self.linkName)
+        value = pyrosim.Get_Touch_Sensor_Value_For_Link(self.linkName)
         if len(self.values) <= t:
-            self.values.append(values)
+            self.values.append(value)
         else:
-            self.values[t] = values
-        
-    def Save_Values(self):
-        np.save(f"data/{self.linkName}_SensorValues.npy", self.values)
+            self.values[t] = value

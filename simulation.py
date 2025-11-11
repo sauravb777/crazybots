@@ -3,26 +3,26 @@ import time
 import pybullet as p
 import pybullet_data
 
-import pyrosim.pyrosim as pyrosim
 from robot import ROBOT
 from world import WORLD
 
 
 class SIMULATION:
-    def __init__(self, directOrGUI):
+    def __init__(self, directOrGUI, myID):
         self.directOrGUI = directOrGUI
+        self.myID = myID
         if directOrGUI == "DIRECT":
             self.physicsClient = p.connect(p.DIRECT)
         else:
             self.physicsClient = p.connect(p.GUI)
+            p.configureDebugVisualizer(p.COV_ENABLE_GUI,0)
         p.setAdditionalSearchPath(pybullet_data.getDataPath())
-        p.configureDebugVisualizer(p.COV_ENABLE_GUI,0)
         p.setGravity(0,0,-9.8)
         self.world = WORLD()
-        self.robot = ROBOT()
+        self.robot = ROBOT(myID)
         
     def Run(self):
-        steps = 1000
+        steps = 5000
         for t in range(steps):
             p.stepSimulation()
             self.robot.Sense(t)

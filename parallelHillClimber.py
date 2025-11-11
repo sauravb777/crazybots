@@ -1,8 +1,4 @@
-import glob
 import os
-import platform
-
-import numpy as np
 
 import constants as c
 from solution import SOLUTION
@@ -10,48 +6,47 @@ from solution import SOLUTION
 
 class PARALLEL_HILL_CLIMBER:
     def __init__(self):
-        
-        os.system("del fitness*.txt 2>nul")
-        os.system("del brain*.nndf 2>nul")
-        os.system("del body.urdf 2>nul")
-        os.system("del world.sdf 2>nul")
-
+        self.cleanup_files()
         self.parents = {}
-        self.nextAvailableID = 0 
-
+        self.nextAvailableID = 0
         for i in range(c.populationSize):
             self.parents[i] = SOLUTION(self.nextAvailableID)
             self.nextAvailableID += 1
 
+    def cleanup_files(self):
+        for file in os.listdir('.'):
+            if file.startswith('fitness') and file.endswith('.txt'):
+                try: os.remove(file)
+                except: pass
+            if file.startswith('brain') and file.endswith('.nndf'):
+                try: os.remove(file)
+                except: pass
+        for file in ['body.urdf', 'world.sdf']:
+            if os.path.exists(file):
+                try: os.remove(file)
+                except: pass
+
     def Evolve(self):
+        print("Initial evaluation...")
         self.Evaluate(self.parents, "DIRECT")
-
-        for currentGeneration in range(c.numberOfGenerations):
-            print(f"Generation {currentGeneration}")
-            self.Evolve_For_One_Generation(currentGeneration)
-
+        for generation in range(c.numberOfGenerations):
+            print(f"Generation {generation}")
+            self.Evolve_For_One_Generation()
         self.Show_Best()
-        
-        self.Cleanup_Brain_Files()
 
-    def Cleanup_Brain_Files(self):
-        brain_files = glob.glob("brain*.nndf")
-        for file in brain_files:
-            os.remove(file)
-
-    def Evolve_For_One_Generation(self, generationIndex):
+    def Evolve_For_One_Generation(self):
         self.Spawn()
         self.Mutate()
         self.Evaluate(self.children, "DIRECT")
         self.Select()
-        self.Print(generationIndex)
+        self.Print()
 
     def Spawn(self):
         self.children = {}
-        for k in self.parents:
-            self.children[k] = SOLUTION(self.nextAvailableID)
+        for key in self.parents:
+            self.children[key] = SOLUTION(self.nextAvailableID)
             self.nextAvailableID += 1
-            self.children[k].weights = self.parents[k].weights.copy()
+            self.children[key].weights = self.parents[key].weights.copy()
 
     def Mutate(self):
         for child in self.children.values():
@@ -64,18 +59,17 @@ class PARALLEL_HILL_CLIMBER:
             solution.Wait_For_Simulation_To_End()
 
     def Select(self):
-        for k in self.parents:
-            if self.children[k].fitness > self.parents[k].fitness:
-                self.parents[k] = self.children[k]
+        for key in self.parents:
+            if self.children[key].fitness > self.parents[key].fitness:
+                self.parents[key] = self.children[key]
 
-    def Print(self, generationIndex):
-        for k in sorted(self.parents.keys()):
-            parent_fitness = self.parents[k].fitness
-            child_fitness = self.children[k].fitness
-            print(f"  Parent: {parent_fitness:.4f}  Child: {child_fitness:.4f}")
-        print("\n")
+    def Print(self):
+        print("Fitness values:")
+        for key in sorted(self.parents.keys()):
+            print(f"  Parent: {self.parents[key].fitness:.1f}  Child: {self.children[key].fitness:.1f}")
 
     def Show_Best(self):
-        best_parent = max(self.parents.values(), key=lambda x: x.fitness)
-        print(f"\nBest solution: ID {best_parent.myID}, Fitness: {best_parent.fitness:.4f}")
-        best_parent.Start_Simulation("GUI")
+        best_key = max(self.parents.keys(), key=lambda k: self.parents[k].fitness)
+        best_solution = self.parents[best_key]
+        print(f"Best solution - Flight duration: {best_solution.fitness} steps")
+        best_solution.Start_Simulation("GUI")
