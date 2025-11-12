@@ -1,8 +1,4 @@
-import glob
 import os
-import platform
-
-import numpy as np
 
 import constants as c
 from solution import SOLUTION
@@ -10,14 +6,14 @@ from solution import SOLUTION
 
 class PARALLEL_HILL_CLIMBER:
     def __init__(self):
-        
+      
         os.system("del fitness*.txt 2>nul")
         os.system("del brain*.nndf 2>nul")
         os.system("del body.urdf 2>nul")
         os.system("del world.sdf 2>nul")
 
         self.parents = {}
-        self.nextAvailableID = 0 
+        self.nextAvailableID = 0
 
         for i in range(c.populationSize):
             self.parents[i] = SOLUTION(self.nextAvailableID)
@@ -28,23 +24,16 @@ class PARALLEL_HILL_CLIMBER:
 
         for currentGeneration in range(c.numberOfGenerations):
             print(f"Generation {currentGeneration}")
-            self.Evolve_For_One_Generation(currentGeneration)
+            self.Evolve_For_One_Generation()
 
         self.Show_Best()
-        
-        self.Cleanup_Brain_Files()
 
-    def Cleanup_Brain_Files(self):
-        brain_files = glob.glob("brain*.nndf")
-        for file in brain_files:
-            os.remove(file)
-
-    def Evolve_For_One_Generation(self, generationIndex):
+    def Evolve_For_One_Generation(self):
         self.Spawn()
         self.Mutate()
         self.Evaluate(self.children, "DIRECT")
         self.Select()
-        self.Print(generationIndex)
+        self.Print()
 
     def Spawn(self):
         self.children = {}
@@ -68,14 +57,12 @@ class PARALLEL_HILL_CLIMBER:
             if self.children[k].fitness > self.parents[k].fitness:
                 self.parents[k] = self.children[k]
 
-    def Print(self, generationIndex):
-        for k in sorted(self.parents.keys()):
-            parent_fitness = self.parents[k].fitness
-            child_fitness = self.children[k].fitness
-            print(f"  Parent: {parent_fitness:.4f}  Child: {child_fitness:.4f}")
-        print("\n")
+    def Print(self):
+        print("Fitness values:")
+        for k in self.parents:
+            print(f"  Parent: {self.parents[k].fitness:.4f}")
 
     def Show_Best(self):
         best_parent = max(self.parents.values(), key=lambda x: x.fitness)
-        print(f"\nBest solution: ID {best_parent.myID}, Fitness: {best_parent.fitness:.4f}")
+        print(f"Best fitness: {best_parent.fitness:.4f}")
         best_parent.Start_Simulation("GUI")

@@ -1,66 +1,87 @@
-
 import os
-import sys
 
+import numpy as np
 import pybullet as p
 
-import constants as c
 import pyrosim.pyrosim as pyrosim
 from motor import MOTOR
-from pyrosim.neuralNetwork import NEURAL_NETWORK
 from sensor import SENSOR
 
 
 class ROBOT:
-    def __init__(self):
+    def __init__(self, myID):
+        self.myID = myID
         self.robotId = p.loadURDF("body.urdf")
         pyrosim.Prepare_To_Simulate(self.robotId)
-
-        myID = int(sys.argv[2])
-        nndf_file = f"brain{myID}.nndf"
-        self.nn = NEURAL_NETWORK(nndf_file)
-
-        self.sensors = {}
-        self.motors = {}
+        
+        from pyrosim.neuralNetwork import NEURAL_NETWORK
+        self.nn = NEURAL_NETWORK(f"brain{myID}.nndf")
+        
         self.Prepare_To_Sense()
         self.Prepare_To_Act()
+        
+       
+        self.initialPosition = p.getBasePositionAndOrientation(self.robotId)[0]
 
-    
     def Prepare_To_Sense(self):
+        self.sensors = {}
         for linkName in pyrosim.linkNamesToIndices:
             self.sensors[linkName] = SENSOR(linkName)
-            
-    def Sense(self,t):
+
+    def Sense(self, t):
         for sensor in self.sensors.values():
             sensor.Get_Value(t)
-    
+
+    def Think(self):
+        self.nn.Update()
+
     def Prepare_To_Act(self):
+        self.motors = {}
         for jointName in pyrosim.jointNamesToIndices:
             self.motors[jointName] = MOTOR(jointName)
-            
+
     def Act(self):
         for neuronName in self.nn.Get_Neuron_Names():
             if self.nn.Is_Motor_Neuron(neuronName):
                 jointName = self.nn.Get_Motor_Neurons_Joint(neuronName)
-                desiredAngle = self.nn.Get_Value_Of(neuronName) * c.motorJointRange
+                desiredAngle = self.nn.Get_Value_Of(neuronName) * 0.4
                 self.motors[jointName].Set_Value(self.robotId, desiredAngle)
+
+    def Get_Fitness(self):
+     
+        basePosition, baseOrientation = p.getBasePositionAndOrientation(self.robotId)
+        
+     
+        euler = p.getEulerFromQuaternion(baseOrientation)
+        roll, pitch, yaw = euler
         
     
-    def Think(self):
-        self.nn.Update()
+        forward_distance = basePosition[0] - self.initialPosition[0]
         
-    def Get_Fitness(self):
-        basePositionAndOrientation = p.getBasePositionAndOrientation(self.robotId)
-        x = basePositionAndOrientation[0][0]  
-        y = basePositionAndOrientation[0][1] 
-
-        fitness_value = -x - y 
         
-        myID = int(sys.argv[2])
-        tmp = f"tmp{myID}.txt"
-        final = f"fitness{myID}.txt"
-
+        stability_penalty = abs(roll) + abs(pitch)
+        
+      
+        height_penalty = abs(basePosition[2] - self.initialPosition[2])
+        
+        
+        foot_contact_bonus = 0
+        if "LeftFoot" in self.sensors and len(self.sensors["LeftFoot"].values) > 0:
+       
+            left_foot_contact = sum(1 for val in self.sensors["LeftFoot"].values[-100:] if val == 1)
+            right_foot_contact = sum(1 for val in self.sensors["RightFoot"].values[-100:] if val == 1)
+            foot_contact_bonus = (left_foot_contact + right_foot_contact) * 0.01
+        
+       
+        fitness = (forward_distance * 10) - (stability_penalty * 5) - (height_penalty * 2) + foot_contact_bonus
+        
+        
+        if basePosition[2] < 0.5:
+            fitness -= 50
+        
+        tmp = f"tmp{self.myID}.txt"
+        final = f"fitness{self.myID}.txt"
         with open(tmp, "w") as f:
-            f.write(str(fitness_value))
+            f.write(str(fitness))
         os.replace(tmp, final)
-
+        return fitness
