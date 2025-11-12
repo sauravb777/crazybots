@@ -23,7 +23,6 @@ class PARALLEL_HILL_CLIMBER:
         self.Evaluate(self.parents, "DIRECT")
 
         for currentGeneration in range(c.numberOfGenerations):
-            print(f"Generation {currentGeneration}")
             self.Evolve_For_One_Generation(currentGeneration)
 
         self.Show_Best()
@@ -58,7 +57,6 @@ class PARALLEL_HILL_CLIMBER:
                 self.parents[k] = self.children[k]
 
     def Print(self, generationIndex):
-        print(f"Generation {generationIndex}:")
         for k in sorted(self.parents.keys()):
             parent_fitness = self.parents[k].fitness
             child_fitness = self.children[k].fitness
@@ -67,5 +65,4 @@ class PARALLEL_HILL_CLIMBER:
 
     def Show_Best(self):
         best_parent = max(self.parents.values(), key=lambda x: x.fitness)
-        print(f"Best solution: ID {best_parent.myID}, Fitness: {best_parent.fitness:.4f}")
         best_parent.Start_Simulation("GUI")
