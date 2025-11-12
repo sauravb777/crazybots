@@ -1,5 +1,7 @@
 import numpy as np
-import pyrosim.pyrosim as pyrosim 
+
+import pyrosim.pyrosim as pyrosim
+
 
 class SENSOR:
     def __init__(self, linkName):

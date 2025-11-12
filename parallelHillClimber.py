@@ -1,8 +1,4 @@
-import glob
 import os
-import platform
-
-import numpy as np
 
 import constants as c
 from solution import SOLUTION
@@ -10,7 +6,6 @@ from solution import SOLUTION
 
 class PARALLEL_HILL_CLIMBER:
     def __init__(self):
-        
         os.system("del fitness*.txt 2>nul")
         os.system("del brain*.nndf 2>nul")
         os.system("del body.urdf 2>nul")
@@ -30,13 +25,6 @@ class PARALLEL_HILL_CLIMBER:
             self.Evolve_For_One_Generation(currentGeneration)
 
         self.Show_Best()
-        
-        self.Cleanup_Brain_Files()
-
-    def Cleanup_Brain_Files(self):
-        brain_files = glob.glob("brain*.nndf")
-        for file in brain_files:
-            os.remove(file)
 
     def Evolve_For_One_Generation(self, generationIndex):
         self.Spawn()
@@ -76,4 +64,5 @@ class PARALLEL_HILL_CLIMBER:
 
     def Show_Best(self):
         best_parent = max(self.parents.values(), key=lambda x: x.fitness)
+        print(f"Best solution: ID {best_parent.myID}, Fitness: {best_parent.fitness:.4f}")
         best_parent.Start_Simulation("GUI")
