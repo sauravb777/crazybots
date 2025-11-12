@@ -6,7 +6,7 @@ from solution import SOLUTION
 
 class PARALLEL_HILL_CLIMBER:
     def __init__(self):
-        # Clean up previous files
+       
         os.system("del fitness*.txt 2>nul")
         os.system("del brain*.nndf 2>nul")
         os.system("del body.urdf 2>nul")

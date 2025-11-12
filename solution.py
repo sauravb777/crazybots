@@ -22,7 +22,7 @@ class SOLUTION:
     def Create_Body(self):
         pyrosim.Start_URDF("body.urdf")
         
-        # Torso (central body)
+        # Torso
         pyrosim.Send_Cube(name="Torso", pos=[0, 0, 1.5], size=[0.4, 0.2, 0.8])
         
         # Left Leg
@@ -73,7 +73,6 @@ class SOLUTION:
     def Create_Brain(self):
         pyrosim.Start_NeuralNetwork(f"brain{self.myID}.nndf")
 
-        # Sensor neurons (with arms)
         sensor_links = ["Torso", "LeftThigh", "LeftShin", "LeftFoot", 
                        "RightThigh", "RightShin", "RightFoot",
                        "LeftUpperArm", "LeftLowerArm", "RightUpperArm", "RightLowerArm"]
@@ -81,7 +80,7 @@ class SOLUTION:
         for i, linkName in enumerate(sensor_links):
             pyrosim.Send_Sensor_Neuron(name=i, linkName=linkName)
 
-        # Motor neurons
+
         motor_joints = ["Torso_LeftThigh", "LeftThigh_LeftShin", "LeftShin_LeftFoot",
                        "Torso_RightThigh", "RightThigh_RightShin", "RightShin_RightFoot",
                        "Torso_LeftUpperArm", "LeftUpperArm_LeftLowerArm",
@@ -90,7 +89,6 @@ class SOLUTION:
         for i, jointName in enumerate(motor_joints):
             pyrosim.Send_Motor_Neuron(name=i + len(sensor_links), jointName=jointName)
 
-        # Synapses from all sensor neurons to all motor neurons
         for currentRow in range(len(sensor_links)):
             for currentColumn in range(len(motor_joints)):
                 pyrosim.Send_Synapse(
