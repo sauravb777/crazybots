@@ -22,28 +22,23 @@ class SOLUTION:
     def Create_Body(self):
         pyrosim.Start_URDF("body.urdf")
         
-      
+        # Torso (central body)
         pyrosim.Send_Cube(name="Torso", pos=[0, 0, 1.5], size=[0.4, 0.2, 0.8])
         
-
+        # Left Leg
         pyrosim.Send_Joint(name="Torso_LeftThigh", parent="Torso", child="LeftThigh", 
                           type="revolute", position=[0.1, 0, 1.1], jointAxis="1 0 0")
-       
         pyrosim.Send_Cube(name="LeftThigh", pos=[0, 0, -0.3], size=[0.15, 0.15, 0.6])
         
-       
         pyrosim.Send_Joint(name="LeftThigh_LeftShin", parent="LeftThigh", child="LeftShin", 
                           type="revolute", position=[0, 0, -0.6], jointAxis="1 0 0")
-    
         pyrosim.Send_Cube(name="LeftShin", pos=[0, 0, -0.3], size=[0.12, 0.12, 0.6])
         
-       
         pyrosim.Send_Joint(name="LeftShin_LeftFoot", parent="LeftShin", child="LeftFoot", 
                           type="revolute", position=[0, 0, -0.6], jointAxis="1 0 0")
-    
         pyrosim.Send_Cube(name="LeftFoot", pos=[0, -0.2, 0], size=[0.15, 0.4, 0.1])
         
-      
+        # Right Leg
         pyrosim.Send_Joint(name="Torso_RightThigh", parent="Torso", child="RightThigh", 
                           type="revolute", position=[-0.1, 0, 1.1], jointAxis="1 0 0")
         pyrosim.Send_Cube(name="RightThigh", pos=[0, 0, -0.3], size=[0.15, 0.15, 0.6])
@@ -54,30 +49,48 @@ class SOLUTION:
         
         pyrosim.Send_Joint(name="RightShin_RightFoot", parent="RightShin", child="RightFoot", 
                           type="revolute", position=[0, 0, -0.6], jointAxis="1 0 0")
-     
         pyrosim.Send_Cube(name="RightFoot", pos=[0, -0.2, 0], size=[0.15, 0.4, 0.1])
         
+        # Arms
+        pyrosim.Send_Joint(name="Torso_LeftUpperArm", parent="Torso", child="LeftUpperArm", 
+                          type="revolute", position=[0.2, 0, 1.9], jointAxis="0 1 0")
+        pyrosim.Send_Cube(name="LeftUpperArm", pos=[0.15, 0, 0], size=[0.3, 0.1, 0.1])
+        
+        pyrosim.Send_Joint(name="LeftUpperArm_LeftLowerArm", parent="LeftUpperArm", child="LeftLowerArm", 
+                          type="revolute", position=[0.3, 0, 0], jointAxis="0 1 0")
+        pyrosim.Send_Cube(name="LeftLowerArm", pos=[0.15, 0, 0], size=[0.3, 0.1, 0.1])
+        
+        pyrosim.Send_Joint(name="Torso_RightUpperArm", parent="Torso", child="RightUpperArm", 
+                          type="revolute", position=[-0.2, 0, 1.9], jointAxis="0 1 0")
+        pyrosim.Send_Cube(name="RightUpperArm", pos=[-0.15, 0, 0], size=[0.3, 0.1, 0.1])
+        
+        pyrosim.Send_Joint(name="RightUpperArm_RightLowerArm", parent="RightUpperArm", child="RightLowerArm", 
+                          type="revolute", position=[-0.3, 0, 0], jointAxis="0 1 0")
+        pyrosim.Send_Cube(name="RightLowerArm", pos=[-0.15, 0, 0], size=[0.3, 0.1, 0.1])
         
         pyrosim.End()
 
     def Create_Brain(self):
         pyrosim.Start_NeuralNetwork(f"brain{self.myID}.nndf")
 
-      
+        # Sensor neurons (with arms)
         sensor_links = ["Torso", "LeftThigh", "LeftShin", "LeftFoot", 
-                       "RightThigh", "RightShin", "RightFoot"]
+                       "RightThigh", "RightShin", "RightFoot",
+                       "LeftUpperArm", "LeftLowerArm", "RightUpperArm", "RightLowerArm"]
         
         for i, linkName in enumerate(sensor_links):
             pyrosim.Send_Sensor_Neuron(name=i, linkName=linkName)
 
-     
+        # Motor neurons
         motor_joints = ["Torso_LeftThigh", "LeftThigh_LeftShin", "LeftShin_LeftFoot",
-                       "Torso_RightThigh", "RightThigh_RightShin", "RightShin_RightFoot"]
+                       "Torso_RightThigh", "RightThigh_RightShin", "RightShin_RightFoot",
+                       "Torso_LeftUpperArm", "LeftUpperArm_LeftLowerArm",
+                       "Torso_RightUpperArm", "RightUpperArm_RightLowerArm"]
         
         for i, jointName in enumerate(motor_joints):
             pyrosim.Send_Motor_Neuron(name=i + len(sensor_links), jointName=jointName)
 
-    
+        # Synapses from all sensor neurons to all motor neurons
         for currentRow in range(len(sensor_links)):
             for currentColumn in range(len(motor_joints)):
                 pyrosim.Send_Synapse(

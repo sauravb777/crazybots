@@ -20,9 +20,10 @@ class SIMULATION:
         p.setAdditionalSearchPath(pybullet_data.getDataPath())
         p.setGravity(0, 0, -9.8)
         
+        # Load plane
         self.planeId = p.loadURDF("plane.urdf")
         
-        
+        # Load robot
         self.robot = ROBOT(solutionID)
         
     def Run(self):

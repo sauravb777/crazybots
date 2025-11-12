@@ -195,4 +195,120 @@
             </geometry>
         </collision>
     </link>
+    <joint name="Torso_LeftUpperArm" type="revolute">
+       <parent link="Torso"/>
+       <child  link="LeftUpperArm"/>
+       <origin rpy="0 0 0" xyz="0.2 0 1.9" />
+       <axis xyz="0 1 0"/>
+       <limit effort="0.0" lower="-3.14159" upper="3.14159" velocity="0.0"/>
+    </joint>
+    <link name="LeftUpperArm">
+        <inertial>
+            <origin xyz="0.15 0 0" rpy="0 0 0"/>
+            <mass value="1" />
+            <inertia ixx="100" ixy="0" ixz="0" iyy="100" iyz="0" izz="100" />
+        </inertial>
+        <visual>
+            <origin xyz="0.15 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.3 0.1 0.1" />
+            </geometry>
+            <material name="Cyan">
+                <color rgba="0 1.0 1.0 1.0"/>
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0.15 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.3 0.1 0.1" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="LeftUpperArm_LeftLowerArm" type="revolute">
+       <parent link="LeftUpperArm"/>
+       <child  link="LeftLowerArm"/>
+       <origin rpy="0 0 0" xyz="0.3 0 0" />
+       <axis xyz="0 1 0"/>
+       <limit effort="0.0" lower="-3.14159" upper="3.14159" velocity="0.0"/>
+    </joint>
+    <link name="LeftLowerArm">
+        <inertial>
+            <origin xyz="0.15 0 0" rpy="0 0 0"/>
+            <mass value="1" />
+            <inertia ixx="100" ixy="0" ixz="0" iyy="100" iyz="0" izz="100" />
+        </inertial>
+        <visual>
+            <origin xyz="0.15 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.3 0.1 0.1" />
+            </geometry>
+            <material name="Cyan">
+                <color rgba="0 1.0 1.0 1.0"/>
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0.15 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.3 0.1 0.1" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="Torso_RightUpperArm" type="revolute">
+       <parent link="Torso"/>
+       <child  link="RightUpperArm"/>
+       <origin rpy="0 0 0" xyz="-0.2 0 1.9" />
+       <axis xyz="0 1 0"/>
+       <limit effort="0.0" lower="-3.14159" upper="3.14159" velocity="0.0"/>
+    </joint>
+    <link name="RightUpperArm">
+        <inertial>
+            <origin xyz="-0.15 0 0" rpy="0 0 0"/>
+            <mass value="1" />
+            <inertia ixx="100" ixy="0" ixz="0" iyy="100" iyz="0" izz="100" />
+        </inertial>
+        <visual>
+            <origin xyz="-0.15 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.3 0.1 0.1" />
+            </geometry>
+            <material name="Cyan">
+                <color rgba="0 1.0 1.0 1.0"/>
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="-0.15 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.3 0.1 0.1" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="RightUpperArm_RightLowerArm" type="revolute">
+       <parent link="RightUpperArm"/>
+       <child  link="RightLowerArm"/>
+       <origin rpy="0 0 0" xyz="-0.3 0 0" />
+       <axis xyz="0 1 0"/>
+       <limit effort="0.0" lower="-3.14159" upper="3.14159" velocity="0.0"/>
+    </joint>
+    <link name="RightLowerArm">
+        <inertial>
+            <origin xyz="-0.15 0 0" rpy="0 0 0"/>
+            <mass value="1" />
+            <inertia ixx="100" ixy="0" ixz="0" iyy="100" iyz="0" izz="100" />
+        </inertial>
+        <visual>
+            <origin xyz="-0.15 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.3 0.1 0.1" />
+            </geometry>
+            <material name="Cyan">
+                <color rgba="0 1.0 1.0 1.0"/>
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="-0.15 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.3 0.1 0.1" />
+            </geometry>
+        </collision>
+    </link>
 </robot>
