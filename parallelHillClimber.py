@@ -27,7 +27,6 @@ class PARALLEL_HILL_CLIMBER:
         self.Evaluate(self.parents, "DIRECT")
 
         for currentGeneration in range(c.numberOfGenerations):
-            print(f"Generation {currentGeneration}")
             self.Evolve_For_One_Generation(currentGeneration)
 
         self.Show_Best()
@@ -77,5 +76,4 @@ class PARALLEL_HILL_CLIMBER:
 
     def Show_Best(self):
         best_parent = max(self.parents.values(), key=lambda x: x.fitness)
-        print(f"\nBest solution: ID {best_parent.myID}, Fitness: {best_parent.fitness:.4f}")
         best_parent.Start_Simulation("GUI")
