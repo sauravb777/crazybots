@@ -22,29 +22,28 @@ class SOLUTION:
     def Create_Body(self):
         pyrosim.Start_URDF("body.urdf")
         
-        # Torso (central body)
+      
         pyrosim.Send_Cube(name="Torso", pos=[0, 0, 1.5], size=[0.4, 0.2, 0.8])
         
-        # Left Leg
-        # Hip joint at bottom of torso
+
         pyrosim.Send_Joint(name="Torso_LeftThigh", parent="Torso", child="LeftThigh", 
                           type="revolute", position=[0.1, 0, 1.1], jointAxis="1 0 0")
-        # Thigh extends downward from hip
+       
         pyrosim.Send_Cube(name="LeftThigh", pos=[0, 0, -0.3], size=[0.15, 0.15, 0.6])
         
-        # Knee joint
+       
         pyrosim.Send_Joint(name="LeftThigh_LeftShin", parent="LeftThigh", child="LeftShin", 
                           type="revolute", position=[0, 0, -0.6], jointAxis="1 0 0")
-        # Shin extends downward from knee  
+    
         pyrosim.Send_Cube(name="LeftShin", pos=[0, 0, -0.3], size=[0.12, 0.12, 0.6])
         
-        # Ankle joint - positioned at the BACK of the foot
+       
         pyrosim.Send_Joint(name="LeftShin_LeftFoot", parent="LeftShin", child="LeftFoot", 
                           type="revolute", position=[0, 0, -0.6], jointAxis="1 0 0")
-        # Foot extends FORWARD from the ankle
+    
         pyrosim.Send_Cube(name="LeftFoot", pos=[0, -0.2, 0], size=[0.15, 0.4, 0.1])
         
-        # Right Leg
+      
         pyrosim.Send_Joint(name="Torso_RightThigh", parent="Torso", child="RightThigh", 
                           type="revolute", position=[-0.1, 0, 1.1], jointAxis="1 0 0")
         pyrosim.Send_Cube(name="RightThigh", pos=[0, 0, -0.3], size=[0.15, 0.15, 0.6])
@@ -55,31 +54,30 @@ class SOLUTION:
         
         pyrosim.Send_Joint(name="RightShin_RightFoot", parent="RightShin", child="RightFoot", 
                           type="revolute", position=[0, 0, -0.6], jointAxis="1 0 0")
-        # Foot extends FORWARD from ankle
+     
         pyrosim.Send_Cube(name="RightFoot", pos=[0, -0.2, 0], size=[0.15, 0.4, 0.1])
         
-        # NO ARMS
         
         pyrosim.End()
 
     def Create_Brain(self):
         pyrosim.Start_NeuralNetwork(f"brain{self.myID}.nndf")
 
-        # Sensor neurons (without arms)
+      
         sensor_links = ["Torso", "LeftThigh", "LeftShin", "LeftFoot", 
                        "RightThigh", "RightShin", "RightFoot"]
         
         for i, linkName in enumerate(sensor_links):
             pyrosim.Send_Sensor_Neuron(name=i, linkName=linkName)
 
-        # Motor neurons (without arms)
+     
         motor_joints = ["Torso_LeftThigh", "LeftThigh_LeftShin", "LeftShin_LeftFoot",
                        "Torso_RightThigh", "RightThigh_RightShin", "RightShin_RightFoot"]
         
         for i, jointName in enumerate(motor_joints):
             pyrosim.Send_Motor_Neuron(name=i + len(sensor_links), jointName=jointName)
 
-        # Synapses from all sensor neurons to all motor neurons
+    
         for currentRow in range(len(sensor_links)):
             for currentColumn in range(len(motor_joints)):
                 pyrosim.Send_Synapse(
