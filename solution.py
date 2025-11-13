@@ -22,10 +22,10 @@ class SOLUTION:
     def Create_Body(self):
         pyrosim.Start_URDF("body.urdf")
         
-        # Torso
+        
         pyrosim.Send_Cube(name="Torso", pos=[0, 0, 1.5], size=[0.4, 0.2, 0.8])
         
-        # Left Leg
+       
         pyrosim.Send_Joint(name="Torso_LeftThigh", parent="Torso", child="LeftThigh", 
                           type="revolute", position=[0.1, 0, 1.1], jointAxis="1 0 0")
         pyrosim.Send_Cube(name="LeftThigh", pos=[0, 0, -0.3], size=[0.15, 0.15, 0.6])
@@ -38,7 +38,7 @@ class SOLUTION:
                           type="revolute", position=[0, 0, -0.6], jointAxis="1 0 0")
         pyrosim.Send_Cube(name="LeftFoot", pos=[0, -0.2, 0], size=[0.15, 0.4, 0.1])
         
-        # Right Leg
+       
         pyrosim.Send_Joint(name="Torso_RightThigh", parent="Torso", child="RightThigh", 
                           type="revolute", position=[-0.1, 0, 1.1], jointAxis="1 0 0")
         pyrosim.Send_Cube(name="RightThigh", pos=[0, 0, -0.3], size=[0.15, 0.15, 0.6])
@@ -51,7 +51,7 @@ class SOLUTION:
                           type="revolute", position=[0, 0, -0.6], jointAxis="1 0 0")
         pyrosim.Send_Cube(name="RightFoot", pos=[0, -0.2, 0], size=[0.15, 0.4, 0.1])
         
-        # Arms
+        
         pyrosim.Send_Joint(name="Torso_LeftUpperArm", parent="Torso", child="LeftUpperArm", 
                           type="revolute", position=[0.2, 0, 1.9], jointAxis="0 1 0")
         pyrosim.Send_Cube(name="LeftUpperArm", pos=[0.15, 0, 0], size=[0.3, 0.1, 0.1])
