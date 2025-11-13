@@ -1,5 +1,7 @@
 import numpy as np
-import pyrosim.pyrosim as pyrosim 
+
+import pyrosim.pyrosim as pyrosim
+
 
 class SENSOR:
     def __init__(self, linkName):
@@ -12,9 +14,6 @@ class SENSOR:
             self.values.append(values)
         else:
             self.values[t] = values
-            
-        # if t == steps - 1:
-        #     print(f"{self.linkName} values: {self.values}")
         
     def Save_Values(self):
         np.save(f"data/{self.linkName}_SensorValues.npy", self.values)
