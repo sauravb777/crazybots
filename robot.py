@@ -1,4 +1,3 @@
-
 import os
 import sys
 
@@ -12,8 +11,11 @@ from sensor import SENSOR
 
 
 class ROBOT:
-    def __init__(self):
-        self.robotId = p.loadURDF("body.urdf")
+    def __init__(self, robot_id=0):
+        body_file = f"body{robot_id}.urdf"
+        self.robotId = p.loadURDF(body_file)
+        self.robot_id = robot_id
+        
         pyrosim.Prepare_To_Simulate(self.robotId)
 
         myID = int(sys.argv[2])
@@ -22,15 +24,15 @@ class ROBOT:
 
         self.sensors = {}
         self.motors = {}
+        self.initial_position = p.getBasePositionAndOrientation(self.robotId)[0]
         self.Prepare_To_Sense()
         self.Prepare_To_Act()
 
-    
     def Prepare_To_Sense(self):
         for linkName in pyrosim.linkNamesToIndices:
             self.sensors[linkName] = SENSOR(linkName)
             
-    def Sense(self,t):
+    def Sense(self, t):
         for sensor in self.sensors.values():
             sensor.Get_Value(t)
     
@@ -45,22 +47,16 @@ class ROBOT:
                 desiredAngle = self.nn.Get_Value_Of(neuronName) * c.motorJointRange
                 self.motors[jointName].Set_Value(self.robotId, desiredAngle)
         
-    
     def Think(self):
         self.nn.Update()
         
     def Get_Fitness(self):
         basePositionAndOrientation = p.getBasePositionAndOrientation(self.robotId)
-        x = basePositionAndOrientation[0][0]  
-        y = basePositionAndOrientation[0][1] 
-
-        fitness_value = -x - y 
+        current_position = basePositionAndOrientation[0]
+        
+        distance_traveled = current_position[0] - self.initial_position[0]
         
         myID = int(sys.argv[2])
-        tmp = f"tmp{myID}.txt"
-        final = f"fitness{myID}.txt"
-
-        with open(tmp, "w") as f:
-            f.write(str(fitness_value))
-        os.replace(tmp, final)
-
+        tmp_file = f"tmp{myID}_robot{self.robot_id}.txt"
+        with open(tmp_file, "w") as f:
+            f.write(str(distance_traveled))

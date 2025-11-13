@@ -1,5 +1,6 @@
-numberOfGenerations = 10
+numberOfGenerations = 5
 populationSize = 10
 numSensorNeurons = 9
 numMotorNeurons = 8  
-motorJointRange = 0.2  
+motorJointRange = 0.4
+swarmSize = 7

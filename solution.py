@@ -1,4 +1,3 @@
-
 import os
 import random
 import subprocess
@@ -19,37 +18,48 @@ class SOLUTION:
 
     def Create_World(self):
         pyrosim.Start_SDF("world.sdf")
-        pyrosim.Send_Cube(name="Box", pos=[0, 4, 0.5], size=[1,1,1]) 
+  
+        pyrosim.Send_Cube(name="Box", pos=[5, 0, 0.5], size=[1, 1, 1]) 
         pyrosim.End()
 
-    def Create_Body(self):
-        pyrosim.Start_URDF("body.urdf")
+    def Create_Body(self, robot_id=0):
+        offset_x = robot_id * 3.0 
+        filename = f"body{robot_id}.urdf"
         
-        pyrosim.Send_Cube(name="Torso", pos=[0, 0, 0.5], size=[1, 1, 1])
+        pyrosim.Start_URDF(filename)
+        
+        pyrosim.Send_Cube(name="Torso", pos=[offset_x, 0, 0.5], size=[1, 1, 1])
         
         pyrosim.Send_Joint(name="Torso_FrontLeg", parent="Torso", child="FrontLeg", 
-                          type="revolute", position=[0, 0.5, 0.5], jointAxis="0 1 0")
+                          type="revolute", position=[offset_x, 0.5, 0.5], jointAxis="1 0 0")
+        
         pyrosim.Send_Cube(name="FrontLeg", pos=[0, 0.5, 0], size=[0.2, 1, 0.2])
         
+        
         pyrosim.Send_Joint(name="Torso_BackLeg", parent="Torso", child="BackLeg", 
-                          type="revolute", position=[0, -0.5, 0.5], jointAxis="0 1 0")
+                          type="revolute", position=[offset_x, -0.5, 0.5], jointAxis="1 0 0")
+      
         pyrosim.Send_Cube(name="BackLeg", pos=[0, -0.5, 0], size=[0.2, 1, 0.2])
         
+      
         pyrosim.Send_Joint(name="Torso_LeftLeg", parent="Torso", child="LeftLeg", 
-                          type="revolute", position=[0.5, 0, 0.5], jointAxis="0 1 0")
+                          type="revolute", position=[offset_x + 0.5, 0, 0.5], jointAxis="0 1 0")
+ 
         pyrosim.Send_Cube(name="LeftLeg", pos=[0.5, 0, 0], size=[1, 0.2, 0.2])
         
+        
         pyrosim.Send_Joint(name="Torso_RightLeg", parent="Torso", child="RightLeg", 
-                          type="revolute", position=[-0.5, 0, 0.5], jointAxis="0 1 0")
+                          type="revolute", position=[offset_x - 0.5, 0, 0.5], jointAxis="0 1 0")
+   
         pyrosim.Send_Cube(name="RightLeg", pos=[-0.5, 0, 0], size=[1, 0.2, 0.2])
         
         pyrosim.Send_Joint(name="FrontLeg_FrontLowerLeg", parent="FrontLeg", 
-                          child="FrontLowerLeg", type="revolute", position=[0, 1.0, 0], jointAxis="0 1 0")
+                          child="FrontLowerLeg", type="revolute", position=[0, 1.0, 0], jointAxis="1 0 0")
+
         pyrosim.Send_Cube(name="FrontLowerLeg", pos=[0, 0, -0.5], size=[0.2, 0.2, 1])
-        
 
         pyrosim.Send_Joint(name="BackLeg_BackLowerLeg", parent="BackLeg", 
-                          child="BackLowerLeg", type="revolute", position=[0, -1.0, 0], jointAxis="0 1 0")
+                          child="BackLowerLeg", type="revolute", position=[0, -1.0, 0], jointAxis="1 0 0")
         pyrosim.Send_Cube(name="BackLowerLeg", pos=[0, 0, -0.5], size=[0.2, 0.2, 1])
         
         pyrosim.Send_Joint(name="LeftLeg_LeftLowerLeg", parent="LeftLeg", 
@@ -58,6 +68,7 @@ class SOLUTION:
        
         pyrosim.Send_Joint(name="RightLeg_RightLowerLeg", parent="RightLeg", 
                           child="RightLowerLeg", type="revolute", position=[-1.0, 0, 0], jointAxis="0 1 0")
+  
         pyrosim.Send_Cube(name="RightLowerLeg", pos=[0, 0, -0.5], size=[0.2, 0.2, 1])
         
         pyrosim.End()
@@ -78,7 +89,6 @@ class SOLUTION:
         for i, jointName in enumerate(motor_joints):
             pyrosim.Send_Motor_Neuron(name=i + len(sensor_links), jointName=jointName)
 
-
         for currentRow in range(len(sensor_links)):
             for currentColumn in range(len(motor_joints)):
                 pyrosim.Send_Synapse(
@@ -94,7 +104,9 @@ class SOLUTION:
         self.weights[row, col] = random.random() * 2 - 1
     
     def Start_Simulation(self, directOrGUI):
-        self.Create_Body()
+        for i in range(c.swarmSize):
+            self.Create_Body(robot_id=i)
+            
         self.Create_World()
         self.Create_Brain()
 
@@ -118,3 +130,8 @@ class SOLUTION:
         with open(filename, "r") as f:
             self.fitness = float(f.read().strip())
         os.remove(filename)
+        
+        for i in range(c.swarmSize):
+            body_file = f"body{i}.urdf"
+            if os.path.exists(body_file):
+                os.remove(body_file)

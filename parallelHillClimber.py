@@ -13,8 +13,9 @@ class PARALLEL_HILL_CLIMBER:
         
         os.system("del fitness*.txt 2>nul")
         os.system("del brain*.nndf 2>nul")
-        os.system("del body.urdf 2>nul")
+        os.system("del body*.urdf 2>nul")  
         os.system("del world.sdf 2>nul")
+        os.system("del tmp*.txt 2>nul")  
 
         self.parents = {}
         self.nextAvailableID = 0 
@@ -27,7 +28,6 @@ class PARALLEL_HILL_CLIMBER:
         self.Evaluate(self.parents, "DIRECT")
 
         for currentGeneration in range(c.numberOfGenerations):
-            print(f"Generation {currentGeneration}")
             self.Evolve_For_One_Generation(currentGeneration)
 
         self.Show_Best()
@@ -69,13 +69,14 @@ class PARALLEL_HILL_CLIMBER:
                 self.parents[k] = self.children[k]
 
     def Print(self, generationIndex):
+        print("\n")
         for k in sorted(self.parents.keys()):
             parent_fitness = self.parents[k].fitness
             child_fitness = self.children[k].fitness
-            print(f"  Parent: {parent_fitness:.4f}  Child: {child_fitness:.4f}")
+            print(f"Parent: {parent_fitness:.4f}  Child: {child_fitness:.4f}")
         print("\n")
 
     def Show_Best(self):
         best_parent = max(self.parents.values(), key=lambda x: x.fitness)
-        print(f"\nBest solution: ID {best_parent.myID}, Fitness: {best_parent.fitness:.4f}")
+        # print(f"\nBest solution: ID {best_parent.myID}, Fitness: {best_parent.fitness:.4f}")
         best_parent.Start_Simulation("GUI")
