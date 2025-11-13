@@ -36,7 +36,6 @@ class SOLUTION:
                           type="revolute", position=[0, 0, -0.6], jointAxis="1 0 0")
         pyrosim.Send_Cube(name="LeftFoot", pos=[0, -0.2, 0], size=[0.15, 0.4, 0.1])
         
-
         pyrosim.Send_Joint(name="Torso_RightThigh", parent="Torso", child="RightThigh", 
                           type="revolute", position=[-0.1, 0, 1.1], jointAxis="1 0 0")
         pyrosim.Send_Cube(name="RightThigh", pos=[0, 0, -0.3], size=[0.15, 0.15, 0.6])
@@ -48,6 +47,7 @@ class SOLUTION:
         pyrosim.Send_Joint(name="RightShin_RightFoot", parent="RightShin", child="RightFoot", 
                           type="revolute", position=[0, 0, -0.6], jointAxis="1 0 0")
         pyrosim.Send_Cube(name="RightFoot", pos=[0, -0.2, 0], size=[0.15, 0.4, 0.1])
+        
         
         pyrosim.End()
 
