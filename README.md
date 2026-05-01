@@ -6,6 +6,6 @@ This repository contains my implementation of the Ludobots project, covering rob
 
 ## Implementation Walkthrough
 
-This video provides an overview of the full implementation, covering different development stages across branches, including simulation setup and evolutionary optimization methods.
+This video playlist provides an overview of the full implementation, covering different development stages across branches, including simulation setup and evolutionary optimization methods.
 
 [![Ludobots Implementation Walkthrough](https://img.youtube.com/vi/HRN94KokF8Y/0.jpg)](https://www.youtube.com/watch?v=HRN94KokF8Y&list=PLY2_u3ns23FAoSk-0L63_Uj29qzb6zbVb)
